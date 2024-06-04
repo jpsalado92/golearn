@@ -1,14 +1,17 @@
 package main
 
-func do() (a int) {
-    defer func() {
-        a = 2
-    }()
-    a = 1
-    return a
-}
+import "fmt"
+
 
 func main() {
-    a := do()
-    println(a)
+    s:= make([]func(), 4) // create a slice of 4 functions
+
+    for i := 0; i < 4; i++ {
+        s[i] = func() {
+            fmt.Printf("%d @ %p\n", i, &i) // print the value of i
+        }
+    }
+    for i := 0; i < 4; i++ {
+        s[i]() // call each function
+    }
 }
