@@ -2,16 +2,14 @@ package main
 
 import "fmt"
 
-
 func main() {
-    s:= make([]func(), 4) // create a slice of 4 functions
-
-    for i := 0; i < 4; i++ {
-        s[i] = func() {
-            fmt.Printf("%d @ %p\n", i, &i) // print the value of i
-        }
-    }
-    for i := 0; i < 4; i++ {
-        s[i]() // call each function
-    }
+    v := make([]int, 5) // len(v)=5, cap(v)=5
+    fmt.Printf("len=%d cap=%d %v\n", len(v), cap(v), v)
+    fmt.Printf("Memory address for v: %p\n", &v)
+    fmt.Printf("Memory address for v[0]: %p\n", &v[0])
+    
+    v = append(v, 0) // len(v)=6, cap(v)=10
+    fmt.Printf("len=%d cap=%d %v\n", len(v), cap(v), v)
+    fmt.Printf("Memory address for v: %p\n", &v)
+    fmt.Printf("Memory address for v[0]: %p\n", &v[0])
 }
