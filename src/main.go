@@ -3,13 +3,14 @@ package main
 import "fmt"
 
 func main() {
-    v := make([]int, 5) // len(v)=5, cap(v)=5
-    fmt.Printf("len=%d cap=%d %v\n", len(v), cap(v), v)
-    fmt.Printf("Memory address for v: %p\n", &v)
-    fmt.Printf("Memory address for v[0]: %p\n", &v[0])
+    a := []int{1,2,3}
+    b := a[:1]
+    c := b[:2]
+    d := c[0:1:1]
     
-    v = append(v, 0) // len(v)=6, cap(v)=10
-    fmt.Printf("len=%d cap=%d %v\n", len(v), cap(v), v)
-    fmt.Printf("Memory address for v: %p\n", &v)
-    fmt.Printf("Memory address for v[0]: %p\n", &v[0])
+    a[0] = 10
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("a: %v", a), cap(a), len(a))
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("b: %v", b), cap(b), len(b))
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("c: %v", c), cap(c), len(c))
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("d: %v", d), cap(d), len(d))
 }

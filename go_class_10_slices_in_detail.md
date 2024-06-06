@@ -6,12 +6,13 @@
     - [Empty Slice](#empty-slice)
     - [Empty slice with only length defined](#empty-slice-with-only-length-defined)
     - [Slice with length and capacity defined](#slice-with-length-and-capacity-defined)
-  - [Summary: Slice types](#summary-slice-types)
+    - [Summary Table](#summary-table)
   - [Empty vs Nil](#empty-vs-nil)
     - [GOTCHA: Differences on json encoding](#gotcha-differences-on-json-encoding)
     - [TIP: Avoid checking for nil before checking emptiness, instead directly use len()](#tip-avoid-checking-for-nil-before-checking-emptiness-instead-directly-use-len)
   - [Overflowing slice capacity](#overflowing-slice-capacity)
-    - [Memory address of the slice](#memory-address-of-the-slice)
+    - [Overflow memory reallocation](#overflow-memory-reallocation)
+  - [Inheriting capacity when slicing a slice](#inheriting-capacity-when-slicing-a-slice)
 
 ## Slice types
 ### Nil Slice
@@ -122,7 +123,7 @@ Is slice nil?: false
 Slice representation: []int{}
 ```
 
-## Summary: Slice types
+### Summary Table
 | Case                           | Definition             | Value       | Type  | Length | Capacity | Is nil? | Representation       |
 | ------------------------------ | ---------------------- | ----------- | ----- | ------ | -------- | ------- | -------------------- |
 | Nil Slice                      | var s []int            | []          | []int | 0      | 0        | true    | []int(nil)           |
@@ -201,7 +202,7 @@ len=6 cap=10 [1 2 3 4 5 6]
 
 As seen in the example, whenever the capacity of a slice is exceeded, the slice is reallocated with a new capacity. The new capacity is calculated as 2 times the old capacity. This is done to avoid frequent reallocations and copying of the slice elements.
 
-### Memory address of the slice
+### Overflow memory reallocation
 
 ```go
 package main
@@ -232,3 +233,82 @@ Memory address for v[0]: 0xc0000220a0
 As seen in the example, the value of `v` does not change after the capacity overflow, because it refers to the **slice variable**.
 
 However, the memory address of the slice elements changes after the capacity overflow, because the slice elements are reallocated to a new memory location.
+
+## Inheriting capacity when slicing a slice
+
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    a := []int{1,2,3}
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("a: %v", a), cap(a), len(a))
+    b := a[:1]
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("b: %v", b), cap(b), len(b))
+    c := b[:2]
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("c: %v", c), cap(c), len(c))
+}
+```
+```
+a: [1 2 3] (cap:3; len:3)
+b: [1]     (cap:3; len:1)
+c: [1 2]   (cap:3; len:2)
+```
+
+In this example, the capacity of the slice `b` is inherited from the slice `a`. Similarly, the capacity of the slice `c` is inherited from the slice `b`. This is because the slice `b` and `c` are created by slicing the slice `a` and `b` respectively.
+
+When doing `c := b[:2]`, the original slice `a` is implicitly referenced by the slice `b`. Therefore, the value `2` will be the second element of `c`.
+
+This can be solved by using the following notation:
+```go
+package main
+
+import "fmt"
+
+func main() {
+    a := []int{1,2,3}
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("a: %v", a), cap(a), len(a))
+    b := a[:1]
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("b: %v", b), cap(b), len(b))
+    c := b[:2]
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("c: %v", c), cap(c), len(c))
+    d := c[0:1:1]
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("d: %v", d), cap(d), len(d))
+}
+```
+```
+a: [1 2 3] (cap:3; len:3)
+b: [1]     (cap:3; len:1)
+c: [1 2]   (cap:3; len:2)
+d: [1]     (cap:1; len:1)
+```
+Here, `d` is created by slicing `c` with a capacity of 1. This way, the capacity of `d` is not inherited from `c`, but is explicitly defined as 1. This is done by using the notation `c[0:1:1]`. The first `1` is the length of the slice, and the second `1` is the capacity of the slice.
+
+Note that every element from a on refers to elements in the original slice. Therefore, if the original slice is modified, the slices created from it will also be modified as in the following example:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    a := []int{1,2,3}
+    b := a[:1]
+    c := b[:2]
+    d := c[0:1:1]
+    
+    a[0] = 10
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("a: %v", a), cap(a), len(a))
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("b: %v", b), cap(b), len(b))
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("c: %v", c), cap(c), len(c))
+    fmt.Printf("%-10s (cap:%d; len:%d)\n", fmt.Sprintf("d: %v", d), cap(d), len(d))
+}
+```
+```
+a: [10 2 3] (cap:3; len:3)
+b: [10]    (cap:3; len:1)
+c: [10 2]  (cap:3; len:2)
+d: [10]    (cap:1; len:1)
+```
