@@ -56,3 +56,35 @@ func main() {
 }
 
 ```
+
+## String manipulation
+
+* You can't add elements to a string, as strings are immutable.
+* You can use the `+` operator to concatenate strings.
+* You can use the `fmt.Sprintf` function to format strings.
+* You can use the `strings` package to manipulate strings.
+* You can use the `bytes` package to manipulate strings.
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	// Concatenation
+	s1 := "Hello"
+	s2 := "World"
+	s3 := s1 + " " + s2
+	fmt.Println(s3) // Hello World
+	// Formatting
+	s4 := fmt.Sprintf("%s %s", s1, s2)
+	fmt.Println(s4) // Hello World
+	// Manipulation
+	s5 := "Hello, World"
+	s6 := strings.Replace(s5, "World", "世界", -1)
+	fmt.Println(s6) // Hello, 世界
+}
+```
