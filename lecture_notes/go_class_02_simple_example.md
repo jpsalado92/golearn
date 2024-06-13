@@ -1,4 +1,8 @@
 # [Go Class: 02 Simple Example](https://www.youtube.com/watch?v=-EYNVEv-snE&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=3)
+- [Go Class: 02 Simple Example](#go-class-02-simple-example)
+	- [Example 1: Program that reads from STDIN and writes to STDOUT](#example-1-program-that-reads-from-stdin-and-writes-to-stdout)
+	- [Example 2: Program that reads args and writes to STDOUT](#example-2-program-that-reads-args-and-writes-to-stdout)
+	- [Example 3: Program that uses a function in another file and a test for it](#example-3-program-that-uses-a-function-in-another-file-and-a-test-for-it)
 
 ## Example 1: Program that reads from STDIN and writes to STDOUT
 

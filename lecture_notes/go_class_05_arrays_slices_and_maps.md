@@ -1,4 +1,10 @@
 # [Go Class: 05 Arrays, Slices, and Maps](https://www.youtube.com/watch?v=T0Xymg0_aSU&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=6)
+- [Go Class: 05 Arrays, Slices, and Maps](#go-class-05-arrays-slices-and-maps)
+  - [Arrays](#arrays)
+  - [Slices](#slices)
+  - [Main differences table](#main-differences-table)
+  - [Maps](#maps)
+    - [How to tell if a key is in a map:](#how-to-tell-if-a-key-is-in-a-map)
 
 ## Arrays
 - Sequence of elements.

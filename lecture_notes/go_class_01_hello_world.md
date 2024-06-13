@@ -1,4 +1,8 @@
 # [Go Class: 01 Hello world!](https://www.youtube.com/watch?v=A9HfEhvpOEY&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=2)
+- [Go Class: 01 Hello world!](#go-class-01-hello-world)
+  - [Online Go Playground](#online-go-playground)
+  - [Hello World!](#hello-world)
+  - [Running the program](#running-the-program)
 
 ## Online Go Playground
 

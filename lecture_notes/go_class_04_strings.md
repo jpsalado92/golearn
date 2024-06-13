@@ -1,4 +1,10 @@
 # [Go Class: 04 Strings](https://www.youtube.com/watch?v=nxWqANttAdA&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=5)
+- [Go Class: 04 Strings](#go-class-04-strings)
+	- [Strings and runes](#strings-and-runes)
+	- [UTF-8 encoding](#utf-8-encoding)
+	- [Common strings methods](#common-strings-methods)
+	- [Examples](#examples)
+	- [String manipulation](#string-manipulation)
 
 ## Strings and runes
 

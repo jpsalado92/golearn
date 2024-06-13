@@ -1,4 +1,14 @@
 # [Go Class: 03 Basic Types](https://www.youtube.com/watch?v=NNLpEPb2ddE&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=4)
+- [Go Class: 03 Basic Types](#go-class-03-basic-types)
+  - [Basic Types](#basic-types)
+    - [Integers](#integers)
+    - [Real and Complex Numbers](#real-and-complex-numbers)
+    - [Text Types](#text-types)
+    - [Special types](#special-types)
+  - [Multiple ways to declare variables](#multiple-ways-to-declare-variables)
+  - [Showing the type and value of something](#showing-the-type-and-value-of-something)
+  - [Variables initialization](#variables-initialization)
+  - [Constants](#constants)
 
 ## Basic Types
 ### Integers
