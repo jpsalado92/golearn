@@ -1,11 +1,29 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
+
+type address struct {
+	city  string
+	state string
+}
+
+type person struct {
+	name    string
+	age     int
+	address *address
+}
 
 func main() {
-	a := []int{1, 2, 3}
-	a = append(a, 4)
-	fmt.Println(a) // [1 2 3 4]
+	address := address{
+		city:  "New York",
+		state: "NY",
+	}
+	p := person{
+		name:    "Alice",
+		age:     25,
+		address: &address,
+	}
+	fmt.Println(p)
+	fmt.Println(p.address.city)
+	fmt.Println(p.address.state)
 }
