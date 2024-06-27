@@ -64,8 +64,7 @@ func main() {
 		}
 	}
 
-	fileName := fmt.Sprintf("%d_comics.json", numberOfComics)
-	filePath := "../" + fileName
+	filePath := "../xkcd-load.go"
 	file, err := os.Create(filePath)
 	if err != nil {
 		fmt.Println("Error creating file:", err)
