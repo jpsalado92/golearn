@@ -1,0 +1,2 @@
+Try to get interfaces as simple as possible. The lower methods the better.
+Then you can compose them.

@@ -1,29 +1,29 @@
 package main
 
-import "fmt"
+import (
+  "fmt"
+  "image/color"
+  "math"
+)
 
-type address struct {
-	city  string
-	state string
+type Point struct {
+  X, Y float64
 }
 
-type person struct {
-	name    string
-	age     int
-	address *address
+func (p Point) Distance(q Point) float64 {
+  return math.Hypot(q.X-p.X, q.Y-p.Y)
+}
+
+type ColoredPoint struct {
+  Point
+  Color color.RGBA
 }
 
 func main() {
-	address := address{
-		city:  "New York",
-		state: "NY",
-	}
-	p := person{
-		name:    "Alice",
-		age:     25,
-		address: &address,
-	}
-	fmt.Println(p)
-	fmt.Println(p.address.city)
-	fmt.Println(p.address.state)
+  var cp ColoredPoint
+  cp.X = 1
+  fmt.Println(cp.Point.X) // 1
+  cp.Point.Y = 2
+  fmt.Println(cp.Y) // 2
+  fmt.Println(cp.Point.Distance(Point{1, 2})) // 0
 }
