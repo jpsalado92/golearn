@@ -1,29 +1,22 @@
 package main
 
-import (
-  "fmt"
-  "image/color"
-  "math"
-)
-
 type Point struct {
-  X, Y float64
+  X, B string
 }
-
-func (p Point) Distance(q Point) float64 {
-  return math.Hypot(q.X-p.X, q.Y-p.Y)
-}
-
-type ColoredPoint struct {
+type PointA struct {
+  Z, W float64
   Point
-  Color color.RGBA
+}
+type PointB struct {
+  A, B float64
+  PointA
 }
 
 func main() {
-  var cp ColoredPoint
-  cp.X = 1
-  fmt.Println(cp.Point.X) // 1
-  cp.Point.Y = 2
-  fmt.Println(cp.Y) // 2
-  fmt.Println(cp.Point.Distance(Point{1, 2})) // 0
+  var cp PointB
+  cp.Z = 3
+  cp.W = 4
+  cp.A = 5
+  cp.B = 6
+  cp.B = "6"
 }
