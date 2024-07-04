@@ -1,4 +1,18 @@
 [Go Class: 06 Control Statements; Declarations & Types](https://www.youtube.com/watch?v=qpHLhmoV3BY&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=7)
+- [Control Statements](#control-statements)
+  - [If-Else](#if-else)
+  - [For Loops](#for-loops)
+    - [Conditional Loop](#conditional-loop)
+    - [Slice/Array range loop](#slicearray-range-loop)
+    - [Map range loop](#map-range-loop)
+    - [Infinite Loop](#infinite-loop)
+    - [Labelled Loop](#labelled-loop)
+  - [Switch](#switch)
+- [Declarations](#declarations)
+  - [Package scope](#package-scope)
+  - [Exports](#exports)
+  - [Imports](#imports)
+  - [Initialization](#initialization)
 
 ## Control Statements
 
