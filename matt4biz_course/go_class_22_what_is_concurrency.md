@@ -22,7 +22,7 @@ Possibility that non-deterministic order of execution can cause unexpected resul
 
 Combating race conditions:
 
-- Do not share data between goroutines.
+- Do not share data between threads.
 - Make the shared things read-only.
-- Allow only one goroutine to write at a time.
+- Allow only one thread to write at a time.
 - Make the read-modify-write operations atomic.

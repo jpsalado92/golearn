@@ -1,12 +1,13 @@
-#[Go Class: 14 Reference & Value Semantics](https://www.youtube.com/watch?v=904pyovPvXM&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=15)
+# [Go Class: 14 Reference & Value Semantics](https://www.youtube.com/watch?v=904pyovPvXM&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=15)
 
-- [Reference \& Value Semantics](#reference--value-semantics)
-- [When to use pointers](#when-to-use-pointers)
-- [Gotchas](#gotchas)
-  - [Gotcha 1: Loops](#gotcha-1-loops)
-  - [Gotcha 2: Always return the slice](#gotcha-2-always-return-the-slice)
-  - [Gotcha 3: Do not keep pointers to slice values](#gotcha-3-do-not-keep-pointers-to-slice-values)
-  - [Gotcha 4: Example of messed up loop](#gotcha-4-example-of-messed-up-loop)
+- [Go Class: 14 Reference \& Value Semantics](#go-class-14-reference--value-semantics)
+  - [Reference \& Value Semantics](#reference--value-semantics)
+  - [When to use pointers](#when-to-use-pointers)
+  - [Gotchas](#gotchas)
+    - [Gotcha 1: Loops](#gotcha-1-loops)
+    - [Gotcha 2: Always return the slice](#gotcha-2-always-return-the-slice)
+    - [Gotcha 3: Do not keep pointers to slice values](#gotcha-3-do-not-keep-pointers-to-slice-values)
+    - [Gotcha 4: Example of messed up loop](#gotcha-4-example-of-messed-up-loop)
 
 ## Reference & Value Semantics
 Passing down pointers (*Reference Semantincs*) means that: We want to share resources, not copy them.

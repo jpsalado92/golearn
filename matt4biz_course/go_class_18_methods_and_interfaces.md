@@ -1,13 +1,13 @@
-##[Go Class: 18 Methods and Interfaces](https://www.youtube.com/watch?v=W3ZWbhQF6wg&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=20)
+# [Go Class: 18 Methods and Interfaces](https://www.youtube.com/watch?v=W3ZWbhQF6wg&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=20)
 
-- [What is a Method?](#what-is-a-method)
-- [What is an Interface?](#what-is-an-interface)
-- [Why interfaces?](#why-interfaces)
-  - [**Code reuse**:](#code-reuse)
-- [Properties of interfaces](#properties-of-interfaces)
-  - [Duck typing](#duck-typing)
-- [Properties of methods](#properties-of-methods)
-- [Example 1: Geometry (Point, Line, Path) printing](#example-1-geometry-point-line-path-printing)
+- [Go Class: 18 Methods and Interfaces](#go-class-18-methods-and-interfaces)
+  - [What is a Method?](#what-is-a-method)
+  - [What is an Interface?](#what-is-an-interface)
+  - [Why interfaces?](#why-interfaces)
+  - [Interfaces and Structural Typing](#interfaces-and-structural-typing)
+  - [Properties of methods](#properties-of-methods)
+  - [Example 1: Geometry (Point, Line, Path) printing](#example-1-geometry-point-line-path-printing)
+- [Example 2: Colored points](#example-2-colored-points)
 
 ## What is a Method?
 
