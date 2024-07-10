@@ -38,7 +38,7 @@ func main() {
 
 
 	for i := 1; i < numberOfComics; i++ {
-		wg.Add(1)
+		wg.Add(1)  // Increment the WaitGroup counter
 		go func(comicNumber int) {
 			defer wg.Done()
 			comic, shouldReturn := getComic(comicNumber)
@@ -51,8 +51,8 @@ func main() {
 	}
 
 	go func() {
-		wg.Wait()
-		close(comicChannel)
+		wg.Wait()  // Wait for all goroutines to finish, the counter is decremented by each call to wg.Done()
+		close(comicChannel) // Close the channel when all goroutines are done
 	}()
 
 	var comicSlice []ComicDescription

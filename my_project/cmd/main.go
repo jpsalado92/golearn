@@ -1,22 +1,38 @@
 package main
 
-type Point struct {
-  X, B string
+import "fmt"
+
+func generate(limit int, ch chan<- int) {
+	for i := 2; i < limit; i++ {
+		ch <- i
+	}
+	close(ch)
 }
-type PointA struct {
-  Z, W float64
-  Point
+
+func filter(in <-chan int, out chan<- int, prime int) {
+	for i := range in { // Read from the channel until it is closed
+		if i%prime != 0 {
+			out <- i
+		}
+	}
+	close(out)
 }
-type PointB struct {
-  A, B float64
-  PointA
+
+func sieve(limit int) {
+	ch := make(chan int) // Create a channel
+	go generate(limit, ch)      // Start the generator
+	for {
+		prime, ok := <-ch
+		if !ok {
+			break
+		}
+		ch1 := make(chan int)
+		go filter(ch, ch1, prime)
+		ch = ch1
+		fmt.Println(prime)
+	}
 }
 
 func main() {
-  var cp PointB
-  cp.Z = 3
-  cp.W = 4
-  cp.A = 5
-  cp.B = 6
-  cp.B = "6"
+	sieve(100)
 }
