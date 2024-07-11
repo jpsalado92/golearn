@@ -1,0 +1,1 @@
+- "Concurrency in Go: Tools and Techniques for Developers 1st Edition" by Katherine Cox-Buday

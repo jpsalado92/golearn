@@ -1,14 +1,14 @@
 # [Go Class: 23 CSP, Goroutines, and Channels](https://www.youtube.com/watch?v=zJd7Dvg3XCk&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=23)
 
 - [Go Class: 23 CSP, Goroutines, and Channels](#go-class-23-csp-goroutines-and-channels)
-  - [What is a Go routine?](#what-is-a-go-routine)
-  - [What are channels in Go?](#what-are-channels-in-go)
-  - [Examples](#examples)
-    - [Example 1: Sum of a slice](#example-1-sum-of-a-slice)
-    - [Example 2: Parallel GET](#example-2-parallel-get)
-    - [Example 3.1: Stream of IDs with possible race condition](#example-31-stream-of-ids-with-possible-race-condition)
-    - [Example 3.2: Stream of IDs with no race condition](#example-32-stream-of-ids-with-no-race-condition)
-    - [Example 4: Prime Sieve](#example-4-prime-sieve)
+	- [What is a Go routine?](#what-is-a-go-routine)
+	- [What are channels in Go?](#what-are-channels-in-go)
+	- [Examples](#examples)
+		- [Example 1: Sum of a slice](#example-1-sum-of-a-slice)
+		- [Example 2: Parallel GET](#example-2-parallel-get)
+		- [Example 3.1: Stream of IDs with possible race condition](#example-31-stream-of-ids-with-possible-race-condition)
+		- [Example 3.2: Stream of IDs with no race condition](#example-32-stream-of-ids-with-no-race-condition)
+		- [Example 4: Prime Sieve](#example-4-prime-sieve)
 
 ## What is a Go routine?
 
