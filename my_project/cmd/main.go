@@ -1,24 +1,22 @@
 package main
 
 import (
-	"log"
-	"time"
+	"context"
+	"net/http"
 )
 
-const tickRate = 2 * time.Second
+type contextKey string
 
-func main() {
-	log.Println("start")
-	ticker := time.NewTicker(tickRate).C // periodic
-	stopper := time.After(5 * tickRate)  // one shot
-loop:
-	for {
-		select {
-		case <-ticker:
-			log.Println("tick")
-		case <-stopper:
-			break loop
+const TraceKey contextKey = 1
+
+func AddTrace(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		if traceId := r.Header.Get("X-Trace-Id"); traceId != "" {
+			ctx = context.WithValue(ctx, TraceKey, traceId)
 		}
-	}
-	log.Println("finish")
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
