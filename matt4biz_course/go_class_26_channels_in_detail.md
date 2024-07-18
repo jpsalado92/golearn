@@ -77,7 +77,6 @@ We can suspend channels by setting them to nil.
 If reading or writing to a nil channel, the program will block,
 but in a `select` statement it will ignore the channel.
 
-
 ## Reasons for buffering
 
 1. Avoid goroutine leaks (from an abandoned channel)
@@ -96,7 +95,3 @@ This can be modeled through a buffered channel.
 - Attempt to send (write) before starting work.
 - The send will block if the buffer is full.
 - Receive (read) after work is done to free up space, allowing another unit of work to start.
-
-```go
-
-```
