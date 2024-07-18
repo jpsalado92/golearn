@@ -2,21 +2,27 @@ package main
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"time"
 )
 
 type payload struct {
-	text string
+	id  uuid.UUID
+	num int
 }
 
-func requestPayloadGenerator() payload {
-	return payload{text: "a"}
+func requestPayloadGenerator(num int) payload {
+	return payload{
+		id:  uuid.New(),
+		num: num,
+	}
 }
 
 func payloadProcessor(p payload) {
-	fmt.Println(p.text)
-	time.Sleep(4 * time.Second)
-	fmt.Println("done")
+	time.Sleep(1 * time.Second)
+	fmt.Printf("Processing task `%d` with id `{%s}`\n", p.num,p.id)
+	time.Sleep(1 * time.Second)
+	fmt.Printf("Task `%d` done\n", p.num)
 }
 
 func main() {
@@ -25,7 +31,7 @@ func main() {
 
 	pls := make([]payload, 0)
 	for i := 0; i < 5; i++ {
-		p := requestPayloadGenerator()
+		p := requestPayloadGenerator(i)
 		pls = append(pls, p)
 	}
 	// fmt.Println(pls)
