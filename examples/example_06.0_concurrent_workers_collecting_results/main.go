@@ -2,42 +2,64 @@ package main
 
 import (
 	"fmt"
-	"github.com/google/uuid"
+	"io/fs"
+	"path/filepath"
 	"time"
 )
 
-type payload struct {
-	id  uuid.UUID
-	num int
+type pathPayload struct {
+	path string
+	name string
 }
 
-func requestPayloadGenerator(num int) payload {
-	return payload{
-		id:  uuid.New(),
-		num: num,
-	}
+func createPathPayload() []pathPayload {
+	pls := make([]pathPayload, 0)
+
+	filepath.WalkDir("../../", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		} // skip directories
+
+		info, err := d.Info()
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		if info.Size() < 1024*1024/2 {
+			return nil
+		} // skip files smaller than 0,5MB
+
+
+		pls = append(pls, pathPayload{
+			path: path,
+			name: d.Name(),
+		})
+		return nil
+	})
+
+	return pls
 }
 
-func payloadProcessor(p payload) {
+func pathPayloadProcessor(p pathPayload) {
 	time.Sleep(1 * time.Second)
-	fmt.Printf("Processing task `%d` with id `{%s}`\n", p.num,p.id)
+	fmt.Printf("Processing task at `%s`\n", p.path)
 	time.Sleep(1 * time.Second)
-	fmt.Printf("Task `%d` done\n", p.num)
+	fmt.Printf("Task at `%s` done\n", p.path)
 }
 
 func main() {
 
 	// payloadChan := make(chan payload, 4)
 
-	pls := make([]payload, 0)
-	for i := 0; i < 5; i++ {
-		p := requestPayloadGenerator(i)
-		pls = append(pls, p)
-	}
+	paths := createPathPayload()
 	// fmt.Println(pls)
-	for i := range pls {
+	for i := range paths {
 		// fmt.Println(pls[i])
-		go payloadProcessor(pls[i])
+		go pathPayloadProcessor(paths[i])
 	}
 	time.Sleep(5 * time.Second)
 }
