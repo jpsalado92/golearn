@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -35,41 +36,48 @@ type filePathMetadataType struct {
 	modifiedAt time.Time
 }
 
-func getFilePaths(directoryPath string) []filePathMetadataType {
-	filePaths := make([]filePathMetadataType, 0)
+func getFilePaths(directoryPath string) map[string][]filePathMetadataType {
+	fileHashMap := make(map[string][]filePathMetadataType)
+	visitFunc := func(path string, d fs.DirEntry, err error) error {
 
-	filepath.WalkDir(
-		directoryPath,
-		func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 
-			if err != nil {
-				fmt.Println(err)
-				return err
-			}
-
-			if d.IsDir() {
-				return nil
-			} // Skip directories
-
-			info, err := d.Info()
-			if err != nil {
-				fmt.Println(err)
-				return nil
-			}
-			if info.Size() < 1024*1024/2 {
-				return nil
-			} // skip files smaller than 0,5MB
-
-			filePaths = append(filePaths, filePathMetadataType{
-				path:       path,
-				name:       d.Name(),
-				size:       info.Size(),
-				modifiedAt: info.ModTime(),
-			})
+		if d.IsDir() {
 			return nil
-		},
+		} // Skip directories
+
+		info, err := d.Info()
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		if info.Size() < 1024*1024/2 {
+			return nil
+		} // skip files smaller than 0,5MB
+		fileMeta := filePathMetadataType{
+			path:       path,
+			name:       d.Name(),
+			size:       info.Size(),
+			modifiedAt: info.ModTime(),
+		}
+		filePathHash := calculateFilePathHash(fileMeta.path)
+		fileHashMap[filePathHash] = append(fileHashMap[filePathHash], fileMeta)
+		return nil
+	}
+
+	err := filepath.WalkDir(
+		directoryPath,
+		visitFunc,
 	)
-	return filePaths
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return fileHashMap
 }
 
 func calculateFilePathHash(filePath string) string {
@@ -89,15 +97,6 @@ func calculateFilePathHash(filePath string) string {
 
 }
 
-func getFileHashMap(filesMeta []filePathMetadataType) map[string][]filePathMetadataType {
-	fileHashMap := make(map[string][]filePathMetadataType)
-	for _, fileMeta := range filesMeta {
-		filePathHash := calculateFilePathHash(fileMeta.path)
-		fileHashMap[filePathHash] = append(fileHashMap[filePathHash], fileMeta)
-	}
-	return fileHashMap
-}
-
 func printFilePathMetadata(pm filePathMetadataType) {
 	fmt.Printf("\033[33mPath: %s\033[0m\n", pm.path)
 	fmt.Printf(" - Name:        %s\n", pm.name)
@@ -109,8 +108,7 @@ func printFilePathMetadata(pm filePathMetadataType) {
 func main() {
 
 	directoryPath := getAssertDirectoryPath()
-	filesMeta := getFilePaths(directoryPath)
-	fileHashMap := getFileHashMap(filesMeta)
+	fileHashMap := getFilePaths(directoryPath)
 
 	for _, files := range fileHashMap {
 		if len(files) > 1 {
