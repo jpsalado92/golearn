@@ -7,7 +7,7 @@ The tool compares the md5 hash of the files in a given locaitonto find duplicate
 
 As a learning project, it also introduces different approaches. Listed from the most basic to the most advanced:
 
-1. Sequential processing
+1. Sequential processing DONE
 
 2. Concurrent approach
 
