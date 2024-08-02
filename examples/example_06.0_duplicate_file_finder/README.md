@@ -53,6 +53,12 @@ Explanation:
 In this approach some improvements are made to the previous concurrent approach:
 
 - The `filePathMetaDataChan` becomes a buffered channel, so that the main-thread is not blocked until the next hash is calculated.
+- `searchTree` starts goroutines per subdirectory. As the amount of directories is unknown,
+we close the channel after all those routines have been finished, by using a `sync.WaitGroup`.
+
+### 4. Improved concurrent approach with many more workers
+This approach is similar to the previous one, but with a higher number of workers.
+- A channel `limitChan` is implemented so that the number of workers is limited.
 
 ## Benchmark
 
