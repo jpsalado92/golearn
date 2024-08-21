@@ -2,3 +2,4 @@
 
 
 https://github.com/matt4biz/go-class-walk
+golearn/examples/example_06.0_duplicate_file_finder
