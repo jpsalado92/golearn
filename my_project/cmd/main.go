@@ -1,22 +1,27 @@
 package main
 
 import (
-	"context"
-	"net/http"
+	"fmt"
+	"sync"
+	"sync/atomic"
 )
 
-type contextKey string
+func do() int {
+	var x int64
+	wg := sync.WaitGroup{}
 
-const TraceKey contextKey = 1
+	for i := 0; i < 1000; i++ {
+		wg.Add(1)
 
-func AddTrace(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
+		go func() {
+			atomic.AddInt64(&x, 1)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+	return int(x)
+}
 
-		if traceId := r.Header.Get("X-Trace-Id"); traceId != "" {
-			ctx = context.WithValue(ctx, TraceKey, traceId)
-		}
-
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+func main() {
+	fmt.Println(do())
 }
