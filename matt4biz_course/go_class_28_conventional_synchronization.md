@@ -1,18 +1,63 @@
 [Go Class: 28 Conventional Synchronization](https://www.youtube.com/watch?v=DtXNSE3Yejg&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=29)
 
-- [Best practices](#best-practices)
+- [Tool `sync.Mutex`](#tool-syncmutex)
+- [Tool `sync.RWMutex`](#tool-syncrwmutex)
 - [Tool `sync.Once`](#tool-synconce)
 - [Tool `sync.Pool`](#tool-syncpool)
-- [Race condition case](#race-condition-case)
+- [Example: Fixing a race condition](#example-fixing-a-race-condition)
 	- [Example 1.1: Broken code with race condition](#example-11-broken-code-with-race-condition)
 	- [Example 1.2: Semaphore fix](#example-12-semaphore-fix)
 	- [Example 1.3: Mutex fix](#example-13-mutex-fix)
 	- [Example 1.4: Atomic fix](#example-14-atomic-fix)
 
-## Best practices
+## Tool `sync.Mutex`
+
+A `sync.Mutex` is used to protect shared data from concurrent access. It is used to synchronize access to shared data.
+
+**Tips**
 
 - Embed the `sync.Mutex` in the struct. Use Lock and Unlock methods to protect the struct fields.
-- Use `sync.RWMutex` for read-write locks. Read locks can be acquired by multiple goroutines. Use `RLock` and `RUnlock` for them.
+- When possible, defer the Unlock method to ensure that the lock is released when using it in functions.
+
+## Tool `sync.RWMutex`
+
+The usage of `sync.RWMutex` is more efficent than `sync.Mutex` when we have multiple read operations and few writes.
+
+In this case, we want to read the token from the cache. If the token is not in the cache, we want to fetch it from the server and update the cache. We want to avoid multiple goroutines fetching the token from the server.
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+type Cache struct {
+	mu    sync.RWMutex
+	token string
+}
+
+func (c *Cache) GetToken() string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.token
+}
+
+func (c *Cache) SetToken(token string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.token = token
+}
+
+func main() {
+	c := Cache{}
+	c.SetToken("token")
+	fmt.Println(c.GetToken())
+}
+```
+
+So RLock will allow multiple goroutines to read the token from the cache, but if read operations are happening, the write operation will be blocked until all the read operations are completed.
 
 ## Tool `sync.Once`
 
@@ -26,7 +71,7 @@ func initialize() {
 	x = new(singleton)
 }
 
-Pfunc handle(w http.ResponseWriter, r *http.Request) {
+func handle(w http.ResponseWriter, r *http.Request) {
 	once.Do(initialize) // This is safer than checking for nil and then initializing
 }
 ```
@@ -58,7 +103,7 @@ func log(s string) {
 }
 ```
 
-## Race condition case
+## Example: Fixing a race condition
 
 ### Example 1.1: Broken code with race condition
 
