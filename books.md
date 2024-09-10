@@ -1,1 +1,2 @@
-- "Concurrency in Go: Tools and Techniques for Developers 1st Edition" by Katherine Cox-Buday
+- Book "Concurrency in Go: Tools and Techniques for Developers 1st Edition" by Katherine Cox-Buday
+- Paper: "Understanding Real-World Concurrency Bugs in Go" (Tengfei Tu, Xiaoyu Liu, Linhai Song, Yiying Zhang)
