@@ -2,23 +2,20 @@
 
 - [Go Class: 30 Concurrency Gotchas](#go-class-30-concurrency-gotchas)
   - [Gotcha 1: Race conditions](#gotcha-1-race-conditions)
+  - [Gotcha 2: Dead locks](#gotcha-2-dead-locks)
     - [Description](#description)
     - [Prevention](#prevention)
-    - [Example](#example)
-  - [Gotcha 2: Dead locks](#gotcha-2-dead-locks)
-    - [Description](#description-1)
-    - [Prevention](#prevention-1)
     - [Example 1](#example-1)
     - [Example 2](#example-2)
     - [Example 3](#example-3)
   - [Gotcha 3: Goroutine leaks](#gotcha-3-goroutine-leaks)
-    - [Description](#description-2)
-    - [Prevention](#prevention-2)
+    - [Description](#description-1)
+    - [Prevention](#prevention-1)
     - [Example 1](#example-1-1)
   - [Gotcha 4: Incorrect use of WaitGroup](#gotcha-4-incorrect-use-of-waitgroup)
-    - [Description](#description-3)
-    - [Prevention](#prevention-3)
-    - [Example](#example-1)
+    - [Description](#description-2)
+    - [Prevention](#prevention-2)
+    - [Example](#example)
   - [Gotcha 5: Closure capture](#gotcha-5-closure-capture)
   - [Gotcha 6: Select can lead to mistakes](#gotcha-6-select-can-lead-to-mistakes)
     - [Mistake #1: skipping a full channel to default and losing a message](#mistake-1-skipping-a-full-channel-to-default-and-losing-a-message)
@@ -26,15 +23,19 @@
     - [Four considerations when using concurrency:](#four-considerations-when-using-concurrency)
 
 ## Gotcha 1: Race conditions
-### Description
-### Prevention
-### Example
+A race condition occurs when the outcome of a program depends on the timing or interleaving of multiple threads or processes accessing a shared resource.
+
+In simpler terms, it's like multiple people trying to edit a document at the same time without coordinating. The final version might be a mishmash of changes, leading to unexpected or incorrect results. This can happen in software when multiple threads or processes are trying to modify the same data simultaneously, and the outcome depends on the order in which they do so.### Prevention
+
+In the following example, requests directed to `/` lead to the handler function printing the value of `nextID` and incrementing it.
+
+The race condition occurs when multiple requests are made simultaneously, and the value of `nextID` is read and incremented by multiple goroutines at the same time. This can lead to unexpected results, such as two goroutines reading the same value of `nextID` and incrementing it, resulting in the same value being returned for both requests.
+
 ```go
 var nextID = 0
 
 func handler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "<h1>You got %v<h1>", nextID)
-    // unsafe - data race
     nextID++
 }
 
