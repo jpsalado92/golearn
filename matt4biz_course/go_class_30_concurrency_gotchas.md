@@ -3,18 +3,16 @@
 - [Go Class: 30 Concurrency Gotchas](#go-class-30-concurrency-gotchas)
   - [Gotcha 1: Race conditions](#gotcha-1-race-conditions)
   - [Gotcha 2: Dead locks](#gotcha-2-dead-locks)
+    - [Example 2.1](#example-21)
+    - [Example 2.2](#example-22)
+    - [Example 2.3](#example-23)
+  - [Gotcha 3: Goroutine leaks](#gotcha-3-goroutine-leaks)
     - [Description](#description)
     - [Prevention](#prevention)
     - [Example 1](#example-1)
-    - [Example 2](#example-2)
-    - [Example 3](#example-3)
-  - [Gotcha 3: Goroutine leaks](#gotcha-3-goroutine-leaks)
+  - [Gotcha 4: Incorrect use of WaitGroup](#gotcha-4-incorrect-use-of-waitgroup)
     - [Description](#description-1)
     - [Prevention](#prevention-1)
-    - [Example 1](#example-1-1)
-  - [Gotcha 4: Incorrect use of WaitGroup](#gotcha-4-incorrect-use-of-waitgroup)
-    - [Description](#description-2)
-    - [Prevention](#prevention-2)
     - [Example](#example)
   - [Gotcha 5: Closure capture](#gotcha-5-closure-capture)
   - [Gotcha 6: Select can lead to mistakes](#gotcha-6-select-can-lead-to-mistakes)
@@ -23,11 +21,12 @@
     - [Four considerations when using concurrency:](#four-considerations-when-using-concurrency)
 
 ## Gotcha 1: Race conditions
+
 A race condition occurs when the outcome of a program depends on the timing or interleaving of multiple threads or processes accessing a shared resource.
 
-In simpler terms, it's like multiple people trying to edit a document at the same time without coordinating. The final version might be a mishmash of changes, leading to unexpected or incorrect results. This can happen in software when multiple threads or processes are trying to modify the same data simultaneously, and the outcome depends on the order in which they do so.### Prevention
+In simpler terms, it's like multiple people trying to edit a document at the same time without coordinating. The final version might be a mishmash of changes, leading to unexpected or incorrect results. This can happen in software when multiple threads or processes are trying to modify the same data simultaneously, and the outcome depends on the order in which they do so.
 
-In the following example, requests directed to `/` lead to the handler function printing the value of `nextID` and incrementing it.
+In the following example, requests directed to `/` lead to the handler function printing the value of `nextID`, doing some processing that takes time, and incrementing it.
 
 The race condition occurs when multiple requests are made simultaneously, and the value of `nextID` is read and incremented by multiple goroutines at the same time. This can lead to unexpected results, such as two goroutines reading the same value of `nextID` and incrementing it, resulting in the same value being returned for both requests.
 
@@ -35,8 +34,10 @@ The race condition occurs when multiple requests are made simultaneously, and th
 var nextID = 0
 
 func handler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "<h1>You got %v<h1>", nextID)
-    nextID++
+    id := nextID
+    fmt.Fprintf(w, "<h1>You got %v<h1>", id)
+    // Something that takes some time...
+    nextID = id + 1  // Race condition
 }
 
 func main() {
@@ -46,11 +47,21 @@ func main() {
     }
 }
 ```
+
 ## Gotcha 2: Dead locks
-### Description
-### Prevention
-### Example 1
-Go can usually detect when no goroutine is able to make progress; here the main goroutine is blocked on a channel it can never read.
+
+A deadlock in concurrent programming occurs when two or more threads (or goroutines, in the context of Go) are unable to proceed with their execution because each is waiting for the other to release a resource or complete an action. This creates a cycle of dependencies that prevents any of the involved threads from making progress.
+
+**Example Scenario**
+
+1. Thread A locks Resource 1 and waits for Resource 2.
+1. Thread B locks Resource 2 and waits for Resource 1.
+1. Both threads are now waiting indefinitely for each other to release the resources, resulting in a deadlock.
+
+### Example 2.1
+
+In this example, a deadlock occurs because the main goroutine is waiting to receive from a channel that no other goroutine is sending to:
+
 ```go
 func main() {
     ch := make(chan bool)
@@ -60,29 +71,36 @@ func main() {
             ch <- ok
         }
         }(false)
-    <-ch
+    <-ch  // main goroutine is blocked here
     fmt.Println("DONE")
 }
 ```
-### Example 2
-Locking a mutex and then failing to unlock it afterwards; the fix is to use defer at the point of locking.
+
+### Example 2.2
+
+Another possible source of errors in go is related to locking a mutex and then failing to unlock it afterwards. In order to avoid this, it is recommended to use defer to unlock the mutex.
+
 ```go
 var m sync.Mutex
-    done := make(chan bool)
-    go func() {
-        m.Lock() // not unlocked!
-    }()
-    go func() {
-        time.Sleep(1)
-        m.Lock()
-        defer m.Unlock()
-        done <- true
-    }()
-    <-done
+done := make(chan bool)
+go func() {
+    m.Lock()
+    // m.Unlock() <- This fixes the issue
+}()
+go func() {
+    time.Sleep(1)
+    m.Lock()
+    defer m.Unlock()
+    done <- true
+}()
+<-done
 ```
-### Example 3
-Locking mutexes in the wrong order will often result in deadlock; the fix is always to lock them in the same order everywhere.
+
+### Example 2.3
+
+Locking mutexes in the wrong order will often result in a deadlock. The fix is always to lock them in the same order everywhere.
 This example is also refered as the hungry philosopher problem.
+
 ```go
 var m1, m2 sync.Mutex
 
@@ -103,17 +121,22 @@ go func() {
 }()
 <-done; <-done
 ```
+
 ## Gotcha 3: Goroutine leaks
+
 ### Description
+
 ### Prevention
+
 ### Example 1
+
 In this example, a timeout can lead to a goroutine leak.
 
 The goroutine is launched with an unbuffered channel, and the select statement will wait for the goroutine to complete or for the timeout to be reached. If the timeout is reached before the goroutine completes, the goroutine will block forever, and the goroutine will never be garbage collected.
 
 The solution is to use a buffered channel or to use a context to cancel the goroutine.
 
-```go	
+```go
 func finishReq(timeout time.Duration) *obj {
     ch := make(chan obj)
     go func() {
@@ -129,12 +152,18 @@ func finishReq(timeout time.Duration) *obj {
     }
 }
 ```
+
 ## Gotcha 4: Incorrect use of WaitGroup
+
 ### Description
+
 ### Prevention
+
 ### Example
+
 In this example we are adding to the WaitGroup after starting the unit of work.
 This is wrong as there is a chance the following can happen:
+
 1. Walkdir is accessed the first time.
 2. The WaitGroup is incremented, and a Done is defered.
 3. The visit function is called, but before walkDir gets to the point of adding to the WaitGroup, the function returns.
@@ -159,10 +188,13 @@ err := walkDir(dir, paths, wg)
 
 wg.Wait()
 ```
+
 We should always add to the WaitGroup before starting the unit of work.
+
 ## Gotcha 5: Closure capture
 
 A goroutine closure shouldn’t capture a mutating variable
+
 ```go
 for i := 0; i < 10; i++ { // WRONG
     go func() {
@@ -170,7 +202,9 @@ for i := 0; i < 10; i++ { // WRONG
     }()
 }
 ```
+
 Instead, pass the variable’s value as a parameter. (Passing by value)
+
 ```go
 for i := 0; i < 10; i++ { // RIGHT
     go func(i int) {
@@ -180,6 +214,7 @@ for i := 0; i < 10; i++ { // RIGHT
 ```
 
 Another solution would be to create a new variable inside the loop.
+
 ```go
 for i := 0; i < 10; i++ { // RIGHT
     i := i
@@ -188,6 +223,7 @@ for i := 0; i < 10; i++ { // RIGHT
     }()
 }
 ```
+
 ## Gotcha 6: Select can lead to mistakes
 
 - `default` is always active. If nothing else matches, the default case is selected.
@@ -196,8 +232,8 @@ for i := 0; i < 10; i++ { // RIGHT
 - A “done” channel is just another channel. The fact that it’s called “done” doesn’t make it special.
 - Available channels are selected at random. If multiple channels are ready at the same time, one is chosen at random. Values are not considered from top to bottom.
 
-
 ### Mistake #1: skipping a full channel to default and losing a message
+
 ```go
 for {
     x := socket.Read()
@@ -230,9 +266,11 @@ There’s no guarantee we read all of input before reading done
 Better: use done only for an error abort; close input on EOF
 
 ### Four considerations when using concurrency:
+
 1. Don't start a goroutine without knowing how it will stop
 2. Acquire locks/semaphores as late as possible; release them in the reverse order
 3. Don’t wait for non-parallel work that you could do yourself
+
 ```go
 func do() int {
     ch := make(chan int)
@@ -240,4 +278,5 @@ func do() int {
     return <-ch
 }
 ```
+
 4. Simplify! Review! Test!
