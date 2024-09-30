@@ -4,6 +4,8 @@
   - [Enumerated Types](#enumerated-types)
   - [Variable Argument Lists](#variable-argument-lists)
   - [Unsigned Integers](#unsigned-integers)
+  - [Shortening integers](#shortening-integers)
+  - [Goto](#goto)
 
 Topics: #enumeratedTypes #variableArgumentLists #unsignedIntegers #bitWiseOperators
 
@@ -108,4 +110,30 @@ type TCPFields struct {
     UrgentPointer   uint16
 }
 
+```
+
+## Shortening integers
+
+When converting integers from uint32 to uint16 in Go, the first 16 bits are retained and the rest are discarded.
+This could lead to unexpected results if you are not careful.
+
+## Goto
+
+The `goto` statement is rarely used in Go. It is used to jump to a label in the code.
+
+Every once in a long while, goto is simply easier to understand
+
+```go
+readFormat:
+    err = binary.Read(buf, binary.BigEndian, &header.format)
+    if err != nil {
+        return &header, nil, HeaderReadFailed.from(pos, err)
+    }
+    if header.format == junkID {
+        . . . // find size & consume WAVE junk header
+        goto readFormat
+    }
+    if header.format != fmtID {
+        return &header, nil, InvalidChunkType
+    }
 ```
