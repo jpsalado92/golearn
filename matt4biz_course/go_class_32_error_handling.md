@@ -5,8 +5,9 @@
   - [Wrapping Errors](#wrapping-errors)
     - [Error.Is()](#erroris)
     - [Error.As()](#erroras)
-
-
+  - [Normal errors](#normal-errors)
+  - [Abnormal errors](#abnormal-errors)
+  - [Exception handling](#exception-handling)
 
 ## Errors in Go
 
@@ -20,7 +21,7 @@ type error interface {
 }
 ```
 
-Any concrete type with `Error() string` method satisfies the error interface. 
+Any concrete type with `Error() string` method satisfies the error interface.
 
 ```go
 type MyType struct {}
@@ -88,7 +89,7 @@ func (w *WaveError) Is(t, error) bool {
 if audio, err = DecodeWaveFile("test.wav"); err != nil {
   var e os.PathError // a struct type
 
-  if errors.As(err, &e) {  
+  if errors.As(err, &e) {
     // Here you might decide to just pass the underlying error to the caller
     return e
     ...
@@ -97,3 +98,64 @@ if audio, err = DecodeWaveFile("test.wav"); err != nil {
 }
 ```
 
+## Normal errors
+
+Result from input or external conditions.
+
+In Go these are handled by returning an error object.
+
+```go
+// Not exactly os.Open, but shows the basic logic
+func Open(name string, flag int, perm FileMode) (*File, error) {
+  r, e := syscall.Open(name, flag|syscall.O_CLOEXEC, syscallMode(perm))
+  if e != nil {
+    return nil, &PathError{"open", name, e}
+  }
+  return newFile(uintptr(r), name, kindOpenFile), nil
+}
+```
+
+## Abnormal errors
+
+Result from invalid programming logic. Could be considered as bugs.
+
+```go
+func (d *digest) checkSum() [Size]byte {
+// finish writing the checksum
+  . . .
+  if d.nx != 0 { // panic if there's data left over
+    panic("d.nx != 0")
+  }
+. . .
+}
+```
+
+This should be used when assumptions of our own programming design are wrong.
+
+
+## Exception handling
+
+Other programming languages like Ada, C++, Java, Python, etc. have exception handling, so that the program can recover from an error.
+
+Go does not support exception handling. However, it can the `panic` and `recover` mechanism to simulate exception handling.
+
+```go
+func abc() {
+  panic("omg")
+}
+
+func main() {
+  defer func() {
+
+if p := recover(); p != nil {
+    // what else can you do?
+    fmt.Println("recover:", p)
+  }
+  }()
+
+abc()
+}
+```
+
+In the above code, the `defer` function will be called when the `abc()` function panics.
+The `recover()` function will return the value that was passed to the `panic()` function.
