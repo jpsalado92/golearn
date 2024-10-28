@@ -7,7 +7,7 @@
     - [Costs associated with caching](#costs-associated-with-caching)
     - [Locality](#locality)
     - [Cache efficiency](#cache-efficiency)
-  - [Access patterns](#access-patterns)
+  - [Performant access patterns](#performant-access-patterns)
   - [Synchronization costs](#synchronization-costs)
   - [Other costs](#other-costs)
   - [Optimization in Go](#optimization-in-go)
@@ -38,14 +38,13 @@ When we access a memory location, we load the entire cache line into the cache.
 - The cache line is typically 64 bytes. This means that if we access a single byte,
   we load 64 bytes into the cache.
 - These 64 bytes stored in memory are then passed down to L3 cache, L2 cache, and L1
-   cache, until it reaches the CPU.
+  cache, until it reaches the CPU.
 
 **Cache coherency**:
 
 - Given that multiple CPUs can access the same memory, there may be race conditions when
   one CPU writes to a memory location that another CPU is reading from. So we need to
-   ensure that the cache is coherent across all CPUs.
-
+  ensure that the cache is coherent across all CPUs.
 
 ### Locality
 
@@ -77,11 +76,11 @@ Things that make the cache **more efficient:**
 - Keeping data together (so all of a cache line is used)
 - Processing memory in sequential order (code or data)
 
-## Access patterns
+## Performant access patterns
 
-A slice of objects beats a list with pointers.
-A struct with contiguous fields beats a class with pointers.
-Calling lots short methods via dynamic dispatch is very expensive.
+- A slice of objects beats a list with pointers.
+- A struct with contiguous fields beats a class with pointers.
+- Calling lots short methods via dynamic dispatch is very expensive.
 
 ## Synchronization costs
 
@@ -96,22 +95,20 @@ Amdahl's Law: Total speedup is limited by the fraction of the program that runs 
 
 ## Other costs
 
-- False sharing: Cores fight over cache lines for different variables.
+- **False sharing**: Cores fight over cache lines for different variables.
 - Disk access
+- Virtual memory & its cache
+- Context switching between processes
 - Garbage collection, solve it by:
-
   - Reduce the unnecessary allocations
   - Reduce embedded pointers in objects
   - Paradoxically, you may want a larger heap to reduce garbage collection frequency.
-
-- Virtual memory & its cache
-- Context switching between processes
 
 ## Optimization in Go
 
 Go encourages good desing, you can choose:
 
-- To allocate contiguo
+- To allocate contiguously or not
 - To copy or not to copy
 - To allocate on the stack or heap (sometimes)
 - To be synchronous or asynchronous
