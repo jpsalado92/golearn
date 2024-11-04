@@ -3,6 +3,7 @@
 - [Go Class: 35 Benchmarking](#go-class-35-benchmarking)
   - [Benchmarking in Go](#benchmarking-in-go)
   - [Defining a benchmark function](#defining-a-benchmark-function)
+    - [Avoid optimizations with `//go:noinline`](#avoid-optimizations-with-gonoinline)
     - [Define what to actually measure with b.ResetTimer()](#define-what-to-actually-measure-with-bresettimer)
   - [Collecting benchmark results](#collecting-benchmark-results)
     - [Time limit](#time-limit)
@@ -53,6 +54,19 @@ func BenchmarkFibonacci(b *testing.B) {
     }
 }
 ```
+
+### Avoid optimizations with `//go:noinline`
+
+Some code may be optimized by the compiler, which can affect the results of the benchmark. In order to avoid this, we can use the `//go:noinline` directive to prevent the compiler from inlining the function.
+
+```go
+//go:noinline
+func length( s string ) int {
+    return len(s)
+}
+```
+
+This will prevent the compiler from inlining the `length` function, which can affect the results of the benchmark.
 
 ### Define what to actually measure with b.ResetTimer()
 
